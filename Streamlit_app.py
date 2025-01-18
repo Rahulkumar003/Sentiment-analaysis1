@@ -5,7 +5,7 @@ import os
 import json
 
 # Get the backend URL from environment variable
-BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:5000')
+BACKEND_URL = st.secrets["BACKEND_URL"]
 
 st.title("Transcript Sentiment Analysis")
 
