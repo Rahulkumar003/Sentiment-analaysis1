@@ -43,11 +43,11 @@ def create_sentiment_chart(analysis_results):
     
     return fig
 
-def analyze_text(filepath, method):
+def analyze_text(content, method):
     try:
         response = requests.post(
-            f"{BACKEND_URL}/analyze",
-            json={"filepath": filepath, "method": method.lower()}
+            f"{BACKEND_URL}/api/analyze",  # Correct endpoint URL
+            json={"text": content, "method": method.lower()}  # Send text instead of filepath
         )
         response.raise_for_status()
         return response.json()
@@ -59,21 +59,13 @@ uploaded_file = st.file_uploader("Upload a transcript", type=["txt"])
 method = st.selectbox("Choose Sentiment Analysis Method", ["TextBlob", "Transformers"])
 
 if uploaded_file is not None:
-    content = uploaded_file.read().decode('utf-8')
+    content = uploaded_file.read().decode('utf-8')  # Read file content as text
     st.text_area("Transcript Content", content, height=150)
     
-    # Create a temporary file
     with st.spinner("Processing..."):
         try:
-            # Upload file
-            files = {"file": uploaded_file}
-            upload_response = requests.post(f"{BACKEND_URL}/upload", files=files)
-            upload_response.raise_for_status()
-            
-            filepath = upload_response.json()["filepath"]
-            
-            # Analyze sentiment
-            analysis_results = analyze_text(filepath, method)
+            # Analyze sentiment directly without uploading the file
+            analysis_results = analyze_text(content, method)
             
             if analysis_results:
                 st.success("Analysis Complete!")
